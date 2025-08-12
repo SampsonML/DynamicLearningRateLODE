@@ -25,8 +25,6 @@ def lode_scheduler(
     reward_step=-1,
     sigma=0.05,
     loss_tol=2,
-    lr_max_rate=1.25,
-    lr_min_rate=0.75,
     n_samples=50,
     verbose=True
 ):
