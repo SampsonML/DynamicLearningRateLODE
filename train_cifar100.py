@@ -61,8 +61,8 @@ def dataset_to_iterator(ds):
     it = map(tf_to_numpy, ds)
     return it
 
-#   grab the model 
-from ResNet18 import ResNet
+#   grab the model
+from models import ResNet
 
 def cross_entropy_loss(logits, labels):
     one_hot_labels = common_utils.onehot(labels, num_classes=num_classes)
@@ -209,7 +209,7 @@ epochs = 60
 weight_decay = 1e-2
 
 # load in the data locally from scratch (faster IO than home)
-data_dir = "/scratch/gpfs/ms0821/tfds_data/"
+data_dir = "/scratch/gpfs/ms0821/tfds_data/"  # change this to wherever you save the cifar100 data
 dataset_builder = tfds.builder('cifar100', data_dir=data_dir)
 dataset_builder.download_and_prepare()
 
@@ -277,7 +277,7 @@ print('training complete')
 
 # save training metrics 
 import pickle 
-save_dir = "/scratch/gpfs/ms0821/lode_optimisers/latent-ode-optimizer/resnet_trials/cifar100/"
+save_dir = "/scratch/gpfs/ms0821/lode_optimisers/latent-ode-optimizer/resnet_trials/cifar100/" # change this to where you would like to save the traning metrics
 save_name = f"schedule_{schedule}_lr_{learning_rate}_seed_{seed}.pkl"
 with open(save_dir+save_name, "wb") as f:
     pickle.dump(history, f)
