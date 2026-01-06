@@ -8,7 +8,7 @@ from jax import random
 import jax.random as jr
 from jax import config
 config.update("jax_enable_x64", True)
-from models import LatentODE
+from .lode import LatentODE
 import jax
 from jax import vmap
 
