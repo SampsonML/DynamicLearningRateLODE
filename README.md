@@ -81,3 +81,16 @@ If you make use of this code please cite:
   year={2025}
 }
 ```
+If you make use of the path-minimised latent-ODE of this repository please cite:
+```bibtex
+@article{sampson2025path,
+  title={Path-minimizing latent ODEs for improved extrapolation and inference},
+  author={Sampson, Matt L and Melchior, Peter},
+  journal={Machine Learning: Science and Technology},
+  volume={6},
+  number={2},
+  pages={025047},
+  year={2025},
+  publisher={IOP Publishing}
+}
+```
