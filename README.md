@@ -5,7 +5,7 @@
 
 ## Overview 
 
-<img src="/images/model_schematic_.png" height="300">
+<img src="/images/model_schematic_.png" height="500">
 
 
 ## Repository Structure
