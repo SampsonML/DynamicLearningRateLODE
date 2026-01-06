@@ -2,32 +2,34 @@
 #     the lode scheduler routine     #
 # ---------------------------------- #
 import numpy as np
+import jax
 from jax import debug
 import jax.numpy as jnp
 from jax import random
 import jax.random as jr
 from jax import config
+from jax import Array
 config.update("jax_enable_x64", True)
 from .lode import LatentODE
-import jax
 from jax import vmap
+from jax.typing import ArrayLike
 
 
 def lode_scheduler(
-    current_time,
-    model,
-    time_path,
-    loss_path,
-    lr_path,
-    validation_path,
-    lr_schedule,
-    t_final,
-    reward_step=-1,
-    sigma=0.15,
-    loss_tol=2,
-    n_samples=50,
-    verbose=True
-):
+    current_time: int,
+    model: LatentODE,
+    time_path: ArrayLike,
+    loss_path: ArrayLike,
+    lr_path: ArrayLike,
+    validation_path: ArrayLike,
+    lr_schedule: ArrayLike,
+    t_final: int,
+    reward_step: int =-1,
+    sigma: float =0.15,
+    loss_tol: float =2.0,
+    n_samples: int =50,
+    verbose: bool =True
+) -> Array:
     """
     Performs probabilistic extrapolation of training loss curves in latent space using a trained latent ODE model.
     This function perturbs the current latent state of a training trajectory and decodes 
