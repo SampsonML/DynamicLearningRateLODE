@@ -7,7 +7,6 @@ import time
 import numpy as np
 import jax.numpy as jnp
 from jax import grad, jit, vmap
-from jax import random
 from jax.scipy.special import logsumexp
 import tensorflow as tf
 import tensorflow_datasets as tfds
@@ -18,7 +17,6 @@ import diffrax
 import equinox as eqx
 import jax
 import jax.nn as jnn
-import jax.numpy as jnp
 import jax.random as jr
 import optax
 from jax import config
@@ -27,14 +25,6 @@ config.update("jax_enable_x64", True)
 # add type hinting 
 from typing import Tuple, Optional, Any
 from jax.typing import ArrayLike
-
-# define neg-relu in case want to strictly penalize negative lr preds
-def negative_relu_loss(x):
-    """
-    Penalizes negative values in x.
-    Equivalent to relu(-x), i.e., max(0, -x).
-    """
-    return jnp.mean(jnp.maximum(0.0, -x))
 
 # ---------------------------------------------- #
 #         the ODE for the LatentODE-RNN          #

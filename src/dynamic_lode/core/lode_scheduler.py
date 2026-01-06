@@ -81,7 +81,7 @@ def lode_scheduler(
 
     # choose lode optimization hyperparameters
     prev_lr = jnp.exp(lr_path[-1])
-    avg_steps = 3   
+    avg_steps = min(len(loss_path), 3) # early training metrics are volatile
     steps_left = t_final - current_time  
     if reward_step == -1: reward_step = steps_left
     if reward_step > steps_left:
@@ -185,7 +185,6 @@ def lode_scheduler(
     # -------------------------------------------------------------
     # step 3: choose the optimal new franken-curve and re-sample it
     reward_values = closest_array[:,3] 
-    #reward_values = closest_array[:,0] 
     ensemble_n = jnp.minimum(3, reward_values.shape[0])
     best_indices = jnp.argsort(reward_values)[-ensemble_n:] # take the n largest values
     best_times = closest_array[best_indices, 1] 
@@ -224,6 +223,8 @@ def lode_scheduler(
         debug.print("----------------------------------------------\n")
 
     # pad the left of lr array with zeros ensuring it is always the same size
+    # note the lode-scheduler never uses previously-seen values, so no need to store/concat 
+    # the actual old learning rates (which may not not be the correct length)
     pad_len = t_final - steps_left
     pad = jnp.zeros(pad_len)
     lr_schedule_avg = jnp.concatenate([pad, lr_schedule_avg])

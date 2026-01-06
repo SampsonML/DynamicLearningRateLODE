@@ -1,4 +1,6 @@
 # training data and benchmarking script for: https://arxiv.org/abs/2509.23052
+# Note: this script will soon be removed, and merged into a single runscript 
+# with the option to use the LODE-scheduler or not.
 import math
 from functools import partial
 from collections import defaultdict
