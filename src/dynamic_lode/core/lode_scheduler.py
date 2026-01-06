@@ -89,8 +89,9 @@ def lode_scheduler(
     extrap_path = jnp.arange(0, 2 * t_final) 
     full_path = jnp.array([loss_path, lr_path, validation_path]).T 
 
-    # now determine the current latent vector (z_0) for the path taken
-    current_latent, _, _ = model._latent(time_path, full_path, key=random.PRNGKey(23))
+    # now determine the current latent vector (z_0) for the path taken, note treat lode_scheduler as a
+    # private function in full LODE-scheduler pipeline, so calling _ methods here
+    current_latent = model._latent(time_path, full_path, key=random.PRNGKey(23))
     current_traj = model._sample(extrap_path, current_latent)
     best_validation = validation_path[-1]
 
