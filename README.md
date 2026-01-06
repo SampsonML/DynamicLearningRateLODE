@@ -27,6 +27,7 @@ DynamicLearningRateLODE/
 ├── experiments/                   # Research runs
 │   ├── lode_cifar100.py           # Main dynamic scheduling experiment
 │   └── train_cifar100.py          # Baseline training script (create training data)
+├── images/                        # Demo images for docs
 ├── pyproject.toml                 # Project metadata and dependencies
 ├── LICENSE                        # Apache 2.0
 └── README.md                      # Docs
