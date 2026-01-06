@@ -28,6 +28,7 @@ config.update("jax_enable_x64", True)
 from typing import Tuple, Optional, Any
 from jax.typing import ArrayLike
 
+# define neg-relu in case want to strictly penalize negative lr preds
 def negative_relu_loss(x):
     """
     Penalizes negative values in x.
@@ -47,7 +48,7 @@ class Func(eqx.Module):
         return self.scale * self.mlp(y)
 
 
-# The LatentODE model based on a Variational Autoencoder
+# The LatentODE model
 class LatentODE(eqx.Module):
     func: Func
     rnn_cell: eqx.nn.GRUCell
@@ -91,7 +92,6 @@ class LatentODE(eqx.Module):
         )
         self.func = Func(scale, mlp)
         self.rnn_cell = eqx.nn.GRUCell(data_size + 1, hidden_size, key=gkey)
-        #self.rnn_cell = eqx.nn.GRUCell(data_size, hidden_size, key=gkey)
         self.hidden_to_latent = eqx.nn.Linear(hidden_size, 2 * latent_size, key=hlkey)
         self.latent_to_hidden = eqx.nn.MLP(
             latent_size, hidden_size, width_size=width_size, depth=depth, key=lhkey
@@ -103,7 +103,7 @@ class LatentODE(eqx.Module):
         self.alpha = alpha
         self.lossType = lossType
 
-    # Encoder of the VAE
+    # Encoder
     def _latent(self, ts, ys, key):
         #ys_ = ys[:,[0, 2]]
         ys_ = ys
@@ -117,17 +117,17 @@ class LatentODE(eqx.Module):
         latent = mean + jr.normal(key, (self.latent_size,)) * std
         return latent, mean, std
 
-    # Decoder of the VAE
+    # Decoder
     def _sample(self, ts, latent):
-        dt0 = 1 #0.2  # selected as a reasonable choice for this problem
+        dt0 = 1 # potential make this user-arg like in path-min repo
         y0 = self.latent_to_hidden(latent)
         solver = (
                 #diffrax.Tsit5()
-            diffrax.Bosh3()
-        )  # see: https://docs.kidger.site/diffrax/api/solvers/ode_solvers/
+            diffrax.Bosh3() # can alter this for speed/accuracy tradeoff
+        )  
         adjoint = (
             diffrax.RecursiveCheckpointAdjoint()
-        )  # see: https://docs.kidger.site/diffrax/api/adjoints/
+        )  
         sol = diffrax.diffeqsolve(
             diffrax.ODETerm(self.func),
             solver,
@@ -170,7 +170,7 @@ class LatentODE(eqx.Module):
 
     # New loss function, no variational loss
     def _distanceloss(self, ys, pred_ys, pred_latent, std):
-        # -log p_θ with Gaussian p_θ
+        # square error
         reconstruction_loss = 0.5 * jnp.sum((ys - pred_ys) ** 2)
         # Mahalanobis distance between latents \sqrt{(x - y)^T \Sigma^{-1} (x - y)}
         diff = jnp.diff(pred_latent, axis=0)
@@ -186,40 +186,6 @@ class LatentODE(eqx.Module):
         magnitude = 1 / jnp.linalg.norm(std_latent)
         distance_loss = alpha * d_latent * magnitude
         return reconstruction_loss + distance_loss
-
-
-    # New loss function - parse in classification loss
-    def _sketchyloss(self, ys, pred_ys, pred_latent, std, latent_spread):
-        ''' 
-        This loss function aims to predict the weight values with the information 
-        of the classification loss they produce as a function of time. 
-        This helps with large deep networks where the classification loss 
-        is very sensetive to the exact weight values.
-        There is a sketchy weighting of the losses to ensure they are of similar magnitude.
-        '''
-        # Mahalanobis distance between latents \sqrt{(x - y)^T \Sigma^{-1} (x - y)}
-        diff = jnp.diff(pred_latent, axis=0)
-        std_latent = self.hidden_to_latent(
-            self.latent_to_hidden(std)
-        )  # get the latent space std
-        Cov = jnp.eye(diff.shape[1]) * std_latent  # latent_state
-        Cov = jnp.linalg.inv(Cov)
-        d_latent = jnp.sqrt(jnp.abs(jnp.sum(jnp.dot(diff, Cov) @ diff.T, axis=1)))
-        d_latent = jnp.sum(d_latent)
-        alpha = self.alpha  # weighting parameter for distance penalty
-        # penalty for shinking latent space
-        latent_std = jnp.mean(latent_spread)
-        magnitude = 1 / latent_std
-        distance_loss = d_latent * magnitude * alpha
-
-        # classification loss
-        classification_loss = jnp.sum((ys - pred_ys) ** 2)
-
-        # add negative relu loss 
-        neg_relu = 0.1 * negative_relu_loss(pred_ys)
-
-        # return the loss
-        return distance_loss + classification_loss + neg_relu
 
     # training routine with suite of 3 loss functions
     def train(self, ts, ys,latent_spread, *, key):
@@ -238,11 +204,9 @@ class LatentODE(eqx.Module):
         # our new autoencoder (not VAE) LatentODE-RNN with no variational loss TODO: test this
         elif self.lossType == "distance":
             return self._distanceloss(ys, pred_ys, pred_latent, std)
-        elif self.lossType == "sketchy":
-            return self._sketchyloss(ys, pred_ys, pred_latent, std, latent_spread)
         else:
             raise ValueError(
-                "lossType must be one of 'default', 'mahalanobis', 'distance' or 'sketchy'"
+                "lossType must be one of 'default', 'mahalanobis', 'distance' "
             )
 
     # Run just the decoder during inference.
@@ -251,7 +215,7 @@ class LatentODE(eqx.Module):
         return self._sample(ts, latent)
 
     def _sampleLatent(self, ts, latent):
-        dt0 = 0.2  # selected as a reasonable choice for this problem
+        dt0 = 0.2  
         y0 = self.latent_to_hidden(latent)
         sol = diffrax.diffeqsolve(
             diffrax.ODETerm(self.func),
