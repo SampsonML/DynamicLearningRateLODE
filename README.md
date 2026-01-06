@@ -47,6 +47,19 @@ uv pip install -e .
 > **Note:** The requirements installs `jax[cpu]`, to run this model with CUDA support if you want GPU acceleration please install the appropriate jax flavour.
 > To do this please visit here (https://docs.jax.dev/en/latest/installation.html) for the latest methods for GPU and TPU compatible JAX installations, noting mainly the version of the CUDA drivers on your machine (i.e. 12.X, 13.X)
 
+## Training a LODE-scheduler
+To train a LODE-scheduler, one needs to collate the learning rate, training loss, and validation accuracy of a set of prior training runs. For example, 
+```shell
+python experiments/train_cifar100.py --schedule cosine --lr 0.01 --seed 1
+```
+will train and save these metrics for a ResNet18 on the CIFAR-100 dataset using a cosine-decay schedule, with a peak learning rate of 0.01, for a random seed 1. From experiments, we find using 5 seeds per hyper-parameter configuration to be sufficient for the training dataset.
+
+To train the latent-ODE model, we strongly reccomend to use a path-minimised latent ODE (https://arxiv.org/abs/2410.08923) for which intructions of how to train, save, and use are here: https://github.com/SampsonML/path-minimized-latent-odes. Once a model is trained and saved, the experiment may be ran via,
+```shell
+python experiments/lode_cifar100.py --schedule cosine --lr 0.01 --seed 1 --path /path/to/latentODE/
+```
+For questions and issues and access to trained models, please contact matt.sampson@princeton.edu
+
 ## Repository Structure
 
 ```text
@@ -75,9 +88,6 @@ DynamicLearningRateLODE/
 ├── LICENSE                        # Apache 2.0
 └── README.md                      # Docs
 ```
-
-### Path-minimised latent ODEs
-This repository makes use of path-minimised latent ODEs, with the removal of a variational penalty and additions of a curvature-aware distance loss. For a standalone implementation of path-minimised latent ODEs see here (https://github.com/SampsonML/path-minimized-latent-odes).
 
 ### Citation
 If you make use of this code please cite:
