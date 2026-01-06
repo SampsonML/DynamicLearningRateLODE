@@ -234,12 +234,12 @@ class LatentODE(eqx.Module):
             return self._loss(ys, pred_ys, mean, std)
         # the classic LatentODE-RNN with the path length penalty
         elif self.lossType == "mahalanobis":
-            return self._pathpenaltyloss(self, ys, pred_ys, pred_latent, mean, std)
+            return self._pathpenaltyloss(ys, pred_ys, pred_latent, mean, std)
         # our new autoencoder (not VAE) LatentODE-RNN with no variational loss TODO: test this
         elif self.lossType == "distance":
-            return self._distanceloss(self, ys, pred_ys, pred_latent, std)
+            return self._distanceloss(ys, pred_ys, pred_latent, std)
         elif self.lossType == "sketchy":
-            return self._sketchyloss(self, ys, pred_ys, pred_latent, std, latent_spread)
+            return self._sketchyloss(ys, pred_ys, pred_latent, std, latent_spread)
         else:
             raise ValueError(
                 "lossType must be one of 'default', 'mahalanobis', 'distance' or 'sketchy'"
