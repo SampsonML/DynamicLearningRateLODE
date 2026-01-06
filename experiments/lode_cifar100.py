@@ -29,39 +29,6 @@ from dynamic_lode.core.lode import LatentODE
 from dynamic_lode.core.lode_scheduler import lode_scheduler
 from dynamic_lode.utils.utils import update_lr_buffer, make_schedule_fn
 
-# -------------------- #
-#     get the lode     #
-# -------------------- #
-# lode hyperparams
-hidden_size = 20  # hidden size of the RNN
-latent_size = 20  # latent size of the autoencoder
-width_size = 20  # width of the ODE
-depth = 2  # depth of the ODE
-alpha = 0.01  # strength of the path penalty
-seed = 1992  # random seed
-lossType = "distance"  # {default, mahalanobis, distance}
-model_size = 3  # model has loss, lr, validation accuracy
-key = jr.PRNGKey(seed)
-data_key, model_key, loader_key, train_key, sample_key = jr.split(key, 5)
-# instantiate the model
-lode = LatentODE(
-    data_size=model_size,
-    hidden_size=hidden_size,
-    latent_size=latent_size,
-    width_size=width_size,
-    depth=depth,
-    key=model_key,
-    alpha=alpha,
-    lossType=lossType,
-)
-
-# load the model
-model_name = "trained_model_name.eqx"
-model_path = "/path/to/model/"
-modelName = model_path + model_name
-lode = eqx.tree_deserialise_leaves(modelName, lode)
-
-
 # ---------------------
 #    data processing
 def augment_image(img):
@@ -372,7 +339,41 @@ parser.add_argument("--lr", type=float, default=5e-2, help="Initial learning rat
 parser.add_argument(
     "--schedule", type=str, default="onecycle", help="Learning rate schedule"
 )
+parser.add_argument(
+    "--path", type=str, default="", help="path to the trained latentODE"
+)
 args = parser.parse_args()
+
+
+# -------------------- #
+#     get the lode     #
+# -------------------- #
+# lode hyperparams
+# Note: these are hardcoded from experimental trials, a packaged train-script will remove these in future
+hidden_size = 20  # hidden size of the RNN
+latent_size = 20  # latent size of the autoencoder
+width_size = 20  # width of the ODE
+depth = 2  # depth of the ODE
+alpha = 0.01  # strength of the path penalty
+seed = 1992  # random seed
+lossType = "distance"  # {default, mahalanobis, distance}
+model_size = 3  # model has loss, lr, validation accuracy
+key = jr.PRNGKey(seed)
+data_key, model_key, loader_key, train_key, sample_key = jr.split(key, 5)
+# instantiate the model
+lode = LatentODE(
+    data_size=model_size,
+    hidden_size=hidden_size,
+    latent_size=latent_size,
+    width_size=width_size,
+    depth=depth,
+    key=model_key,
+    alpha=alpha,
+    lossType=lossType,
+)
+
+# load the model
+lode = eqx.tree_deserialise_leaves(args.path, lode)
 
 # set fixed values for experimental runs
 num_classes = 100
