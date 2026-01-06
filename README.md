@@ -4,6 +4,34 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
+## Repository Structure
+
+```text
+DynamicLearningRateLODE/
+├── src/
+│   └── dynamic_lode/              # Core package root
+│       ├── core/                  
+│       │   ├── __init__.py
+│       │   ├── lode.py            # LatentODE architecture
+│       │   └── lode_scheduler.py  # Latent-ODE based learning rate scheduler
+│       ├── models/                # Model architectures tested
+│       │   ├── __init__.py
+│       │   ├── CNN.py
+│       │   ├── ResNet18.py
+│       │   ├── ResNet34.py
+│       │   └── ResNetFaMNIST.py
+│       └── utils/                 # Utility functions
+│           ├── __init__.py
+│           ├── hessian.py         # Power-iteration eigenvalue approx
+│           └── schedule.py        # JIT-optimized buffer scheduling 
+├── experiments/                   # Research runs
+│   ├── lode_cifar100.py           # Main dynamic scheduling experiment
+│   └── train_cifar100.py          # Baseline training script (create training data)
+├── pyproject.toml                 # Project metadata and dependencies
+├── LICENSE                        # Apache 2.0
+└── README.md                      # Docs
+```
+
 ### Citation
 If you make use of this code please cite:
 ```bibtex
