@@ -12,6 +12,14 @@ We learn a latent representation of training dynamics, training loss, validation
 ### Comparison to other schedules
 Across Fashion-MNIST, CIFAR-100, ImageNet, and even a Transformer language model, the LODE scheduler performs better than the baselines: cosine, OneCycle, exponential decay, hypergradient descent, schedule-free, and reinforcement learning controllers. Quite surprisingly we see that the best performing learning rate schedules determined by our LODE scheduler often suggests significantly higher learning rates at early times than what we see in the best parametric schedules.
 
+| Dataset & Model | 2nd Best Schedule (Baseline) | LODE Accuracy | Improvement |
+| :--- | :--- | :--- | :--- |
+| **Fa-MNIST (CNN)** | 93.6% | **93.8%** | +0.2% |
+| **Fa-MNIST (ResNet18)** | 93.7% | **93.9%** | +0.2% |
+| **CIFAR-100 (ResNet18)** | 74.0% | **74.9%** | +0.9% |
+| **ImageNet (ResNet34)** | 73.9% | **74.5%** | +0.6% |
+| **NLP (Transformer)** | 58.5% | **59.8%** | +1.3% |
+
 <img src="/images/f2.png" height="300">
 
 Not only did models reach higher accuracy, they also landed in flatter regions of the loss landscape—which hints towards stronger model generalization.
