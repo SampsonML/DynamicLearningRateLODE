@@ -373,7 +373,13 @@ lode = LatentODE(
 )
 
 # load the model
-lode = eqx.tree_deserialise_leaves(args.path, lode)
+try:
+    # Attempt to load local model if it exists
+    lode = eqx.tree_deserialise_leaves(args.path, lode)
+    print("Loaded pre-trained LODE model.")
+except (FileNotFoundError, ValueError):
+    print("[WARNING] Pre-trained model not found. Using random initialization for demonstration.")
+    # lode is initialized with random weights
 
 # set fixed values for experimental runs
 num_classes = 100
