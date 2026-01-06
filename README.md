@@ -5,8 +5,20 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Overview 
-
+We learn a latent representation of training dynamics, training loss, validation accuracy and learning rate, from the observation of prior runs, which one would expect to have run anyway during a standard hyperparameter sweep. By encoding training loss, validation accuracy, and learning rate into a latent space and evolving these quantities via an ODE, the system can simulate how training would unfold with different parameters, namely the learning rate schedule. 
 <img src="/images/model_schematic_.png" height="500">
+
+### Comparison to other schedules
+Across Fashion-MNIST, CIFAR-100, ImageNet, and even a Transformer language model, the LODE scheduler performs better than the baselines: cosine, OneCycle, exponential decay, hypergradient descent, schedule-free, and reinforcement learning controllers. Quite surprisingly we see that the best performing learning rate schedules determined by our LODE scheduler often suggests significantly higher learning rates at early times than what we see in the best parametric schedules.
+
+<img src="/images/f2.png" height="250">
+
+Not only did models reach higher accuracy, they also landed in flatter regions of the loss landscape—which hints towards stronger model generalization.
+
+Key highlights:
+- Consistently superior test accuracy across CNNs, ResNets, and Transformers.
+- Flatter minima (confirmed via Hessian eigenvalue analysis).
+- Computational cost only ~25% higher than simple parametric schedules, but cheaper than RL-based methods.
 
 ## Installation
 
