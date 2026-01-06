@@ -209,7 +209,7 @@ def lode_scheduler(
     best_lr /= len(best_times)
     eps = 1e-10
     loss_err = 100 * jnp.abs(best_loss - loss_path[-1]) / (loss_path[-1] + eps)
-    lr_err = 100 * jnp.abs( (jnp.log(best_lr) - jnp.log(prev_lr)) / (jnp.log(prev_lr) + eps))
+    lr_err = 100 * jnp.abs((best_lr - prev_lr) / (prev_lr + eps))
     val_err = 100 * jnp.abs(best_val - validation_path[-1]) / (validation_path[-1] + eps)
 
     if verbose:

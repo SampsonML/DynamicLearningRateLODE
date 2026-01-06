@@ -1,12 +1,13 @@
-# initial cifar100 jax training script modified from
-# from: https://juliusruseckas.github.io/ml/flax-cifar10.html
+# experimantal runscript for CIFAR100 dynamic LODE tests: https://arxiv.org/abs/2509.23052
 import math
 import time
 from functools import partial
 from collections import defaultdict
 from typing import Any, Sequence
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
+import equinox as eqx
 import jax
 import jax.numpy as jnp
 from flax import linen as nn
@@ -19,15 +20,10 @@ import argparse
 tf.config.set_visible_devices([], "GPU")
 jax.local_devices()
 
-import jax
 import jax.nn as jnn
 import jax.random as jr
-import matplotlib
-import matplotlib.pyplot as plt
 from jax import config
-
 config.update("jax_enable_x64", True)
-import equinox as eqx
 
 from dynamic_lode.core.lode import LatentODE
 from dynamic_lode.core.lode_scheduler import lode_scheduler
@@ -43,7 +39,7 @@ width_size = 20  # width of the ODE
 depth = 2  # depth of the ODE
 alpha = 0.01  # strength of the path penalty
 seed = 1992  # random seed
-lossType = "sketchy"  # {default, mahalanobis, distance, sketchy}
+lossType = "distance"  # {default, mahalanobis, distance}
 model_size = 3  # model has loss, lr, validation accuracy
 key = jr.PRNGKey(seed)
 data_key, model_key, loader_key, train_key, sample_key = jr.split(key, 5)
@@ -266,10 +262,9 @@ def train(state, train_iter, val_iter, test_iter, epochs, lr_array):
     virtual_step = 0
     update_step = 0
     cur_t = 0
-    extrap_init = 620
     t_final = 600
+    extrap_init = t_final # this can be altered depending on confidence of lode extrapolation
     switch_nest = False
-    print(f"t final is {t_final}")
     best_lr = jnp.array(lr_array[cur_t])
 
     for epoch in range(1, epochs + 1):
@@ -335,8 +330,6 @@ def train(state, train_iter, val_iter, test_iter, epochs, lr_array):
         # perform lode lr update
         if update_lr == True:
             update_lr = False
-            print(f"<> updating lr with lode optimizer")
-            print(f"current time {cur_t}")
             extrap_len = extrap_init + cur_t
             loss_vec = jnp.array(history["train loss"])
             val_acc_vec = jnp.array(history["val accuracy"])
@@ -356,7 +349,8 @@ def train(state, train_iter, val_iter, test_iter, epochs, lr_array):
                 t_final,
             )
 
-            # update to the new learning rate schedule
+            # update to the new learning rate schedule via buffer routine
+            # this avoids a JIT recompile
             lr_buffer[0] = update_lr_buffer(lr_buffer[0], lr_array)
             new_tx = optax.adamw(
                 learning_rate=schedule_fn,
@@ -380,7 +374,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-# set fixed values
+# set fixed values for experimental runs
 num_classes = 100
 batch_size = 256
 epochs = 60
@@ -494,4 +488,11 @@ state = CustomTrainState.create(
 # train model and save metrics
 history = train(state, train_iter, val_iter, test_iter, epochs, lr_array)
 
-print("training complete")
+# save training metrics 
+import pickle 
+save_dir = "/path/to/save/" # change this to where you would like to save the traning metrics
+save_name = f"schedule_{schedule}_lr_{learning_rate}_seed_{seed}.pkl"
+with open(save_dir+save_name, "wb") as f:
+    pickle.dump(history, f)
+
+print(f'file saved to {save_dir}')

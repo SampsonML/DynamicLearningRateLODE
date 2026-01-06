@@ -1,4 +1,4 @@
-# from: https://juliusruseckas.github.io/ml/flax-cifar10.html
+# training data and benchmarking script for: https://arxiv.org/abs/2509.23052
 import math
 from functools import partial
 from collections import defaultdict
@@ -277,7 +277,7 @@ print('training complete')
 
 # save training metrics 
 import pickle 
-save_dir = "/scratch/gpfs/ms0821/lode_optimisers/latent-ode-optimizer/resnet_trials/cifar100/" # change this to where you would like to save the traning metrics
+save_dir = "/path/to/save" # change this to where you would like to save the traning metrics
 save_name = f"schedule_{schedule}_lr_{learning_rate}_seed_{seed}.pkl"
 with open(save_dir+save_name, "wb") as f:
     pickle.dump(history, f)
