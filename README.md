@@ -68,6 +68,9 @@ DynamicLearningRateLODE/
 └── README.md                      # Docs
 ```
 
+### Path-minimised latent ODEs
+This repository makes use of path-minimised latent ODEs, with the removal of a variational penalty and additions of a curvature-aware distance loss. For a standalone implementation of path-minimised latent ODEs see here (https://github.com/SampsonML/path-minimized-latent-odes).
+
 ### Citation
 If you make use of this code please cite:
 ```bibtex
