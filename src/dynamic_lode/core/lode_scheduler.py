@@ -8,7 +8,6 @@ import jax.numpy as jnp
 from jax import random
 import jax.random as jr
 from jax import config
-from jax import Array
 config.update("jax_enable_x64", True)
 from .lode import LatentODE
 from jax import vmap
@@ -29,7 +28,7 @@ def lode_scheduler(
     loss_tol: float =2.0,
     n_samples: int =50,
     verbose: bool =True
-) -> Array:
+) -> jnp.ndarray:
     """
     Performs probabilistic extrapolation of training loss curves in latent space using a trained latent ODE model.
     This function perturbs the current latent state of a training trajectory and decodes 
