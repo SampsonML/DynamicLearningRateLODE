@@ -20,10 +20,13 @@ import jax
 import jax.nn as jnn
 import jax.numpy as jnp
 import jax.random as jr
-#from numpy.lib.shape_base import row_stack
 import optax
 from jax import config
 config.update("jax_enable_x64", True)
+
+# add type hinting 
+from typing import Tuple, Optional, Any
+from jax.typing import ArrayLike
 
 def negative_relu_loss(x):
     """
