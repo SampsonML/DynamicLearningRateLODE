@@ -189,7 +189,6 @@ class LatentODE(eqx.Module):
 
 
     # New loss function - parse in classification loss
-    @staticmethod
     def _sketchyloss(self, ys, pred_ys, pred_latent, std, latent_spread):
         ''' 
         This loss function aims to predict the weight values with the information 
@@ -222,80 +221,6 @@ class LatentODE(eqx.Module):
         # return the loss
         return distance_loss + classification_loss + neg_relu
 
-
-    # sketchy stochastic weight averaging
-    @staticmethod
-    def _sketchySWA(self, ts, ys, latent_spread, key):
-        ''' 
-        This loss function aims to predict the weight values with the information 
-        of the classification loss they produce as a function of time. 
-        This helps with large deep networks where the classification loss 
-        is very sensetive to the exact weight values.
-        There is a sketchy weighting of the losses to ensure they are of similar magnitude.
-        '''
-        # perform a very sketchy SWA-like sampling of weights
-        rng_cycles = 10
-        for i in range(rng_cycles):
-            # randomly sample trajectories given input
-            key_cycle = jr.PRNGKey(i)
-            latent, mean, std = self._latent(ts, ys, key_cycle)
-            pred_ys = self._sample(ts, latent)
-            int_fac = 1
-            ts_interp = jnp.linspace(ts[0], ts[-1], len(ts) * int_fac)
-            pred_latent = self._sampleLatent(ts_interp, latent)
-            # now average the weight predictions 
-            if i == 0:
-                ys_swa = pred_ys 
-            else:
-                ys_swa += pred_ys
-            # Mahalanobis distance between latents \sqrt{(x - y)^T \Sigma^{-1} (x - y)}
-            diff = jnp.diff(pred_latent, axis=0)
-            std_latent = self.hidden_to_latent(
-                self.latent_to_hidden(std)
-            )  # get the latent space std
-            Cov = jnp.eye(diff.shape[1]) * std_latent  # latent_state
-            Cov = jnp.linalg.inv(Cov)
-            d_latent = jnp.sqrt(jnp.abs(jnp.sum(jnp.dot(diff, Cov) @ diff.T, axis=1)))
-            d_latent = jnp.sum(d_latent)
-        # now take the average of the weights
-        ys_swa = ys_swa / rng_cycles
-        d_latent = d_latent / rng_cycles
-        # now scale the path loss by lambda parameter (alpha)
-        alpha = self.alpha  # weighting parameter for distance penalty
-        # penalty for shinking latent space
-        latent_std = jnp.mean(latent_spread)
-        magnitude = 1 / latent_std
-        distance_loss = d_latent * magnitude * alpha
-
-        # create a schedualer to increase weight of loss at higher times 
-        loss_weight = jnp.logspace(-1, 1, len(pred_ys))
-        classification_loss = jnp.sum((ys - ys_swa) ** 2)
-
-        # return the loss
-        return distance_loss + classification_loss 
-
-    
-    @staticmethod
-    def _sketchyVariational(ys, pred_ys, mean, std):
-        # KL(N(mean, std^2) || N(0, 1))
-        variational_loss = 0.5 * jnp.sum(mean**2 + std**2 - 2 * jnp.log(std) - 1)
-
-        # first reshape the weights and biases of true model 
-        classification_loss = 0
-        for ys_, ys_pred_ in zip(ys, pred_ys):
-            w1 = ys_pred_[:w1_end].reshape(w1_dim)
-            b1 = ys_pred_[w1_end:].reshape(b1_dim)
-            lode_params = [(w1, b1)]
-            true_acc = ys_[0]
-            lode_acc = accuracy(lode_params, test_images, test_labels)
-            classification_loss += (true_acc - lode_acc) ** 2 
- 
-        # debugging zone
-        jax.debug.print("lode accuracy {val} \ntrue accuracy {val2}", val=lode_acc, val2=true_acc)
-        jax.debug.print("----------------------------")
-        # return the loss
-        return classification_loss + variational_loss
-
     # training routine with suite of 3 loss functions
     def train(self, ts, ys,latent_spread, *, key):
         latent, mean, std = self._latent(ts, ys, key)
@@ -315,10 +240,6 @@ class LatentODE(eqx.Module):
             return self._distanceloss(self, ys, pred_ys, pred_latent, std)
         elif self.lossType == "sketchy":
             return self._sketchyloss(self, ys, pred_ys, pred_latent, std, latent_spread)
-        elif self.lossType == "sketchyVariational":
-            return self._sketchyVariational(ys, pred_ys, mean, std)
-        elif self.lossType == "sketchySWA":
-            return self._sketchySWA(self, ts, ys, latent_spread, key)
         else:
             raise ValueError(
                 "lossType must be one of 'default', 'mahalanobis', 'distance' or 'sketchy'"
