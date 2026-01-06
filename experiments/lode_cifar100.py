@@ -108,6 +108,19 @@ class TrainState(train_state.TrainState):
 
 # function to get the schedule
 def get_schedule(schedule_type, init_lr, total_steps):
+    """
+    Allows easier selection of optax learning rate schedules.
+    Args:
+        schedule_type (str): One of ['cosine', 'onecycle', 'flat', 'decay'].
+        init_lr (float): The peak or initial learning rate.
+        total_steps (int): Total number of training steps (decay horizon).
+
+    Returns:
+        optax.schedule: An Optax-compatible schedule function.
+    
+    Raises:
+        ValueError: If an unsupported schedule type is provided.
+    """
     if schedule_type == "cosine":
         return optax.cosine_decay_schedule(init_value=init_lr, decay_steps=total_steps)
     elif schedule_type == "onecycle":
@@ -131,6 +144,16 @@ def get_schedule(schedule_type, init_lr, total_steps):
 # training step
 @jax.jit
 def train_step(state, batch, dropout_rng):
+    """
+    Performs a single training step including backprop and state updates.
+    Args:
+        state (TrainState): The current training state (params + optimizer).
+        batch (dict): A batch of data {'image': ..., 'label': ...}.
+        dropout_rng (jax.random.PRNGKey): Base RNG key for dropout.
+
+    Returns:
+        tuple: (updated_state, metrics_dict)
+    """
     dropout_rng = jax.random.fold_in(dropout_rng, state.step)
 
     def loss_fn(params):
@@ -170,6 +193,29 @@ def calculate_lode_lr(
     update_freq,
     t_final,
 ):
+    """
+    Prepares the context window and queries the LODE scheduler for the next LR schedule.
+    This function slices the most recent `update_freq` steps 
+    from the history metrics to create the "context path" that the LODE encodes 
+    to determine the current training dynamics. In future this function will be 
+    removed and directly ingegrated into the lode_schedule.py pipeline
+
+    Args:
+        lode (LatentODE): The pre-trained Latent ODE model instance.
+        loss_trajectory (list/array): Full history of training losses.
+        lr_trajectory (list/array): Full history of learning rates (log-space).
+        accuracy (list/array): Full history of validation accuracies.
+        extrap_len (int): Total length of the extrapolation horizon 
+        step_current (int): The current global training step.
+        best_loss, best_lr, best_test: Metadata for tracking best performance (unused in this wrapper).
+        lr_array (jnp.ndarray): The current full-length learning rate schedule buffer.
+        update_freq (int): The number of recent steps to use as the context window for the LODE.
+        t_final (int): The target end step of the training run (prediction horizon).
+
+    Returns:
+        jnp.ndarray: An updated learning rate schedule array where the future values 
+                     have been replaced by the LODE's optimal prediction.
+    """
     n = len(loss_trajectory)
     steps_n = update_freq
     time_path = jnp.arange(n - steps_n, n)
@@ -223,6 +269,26 @@ def log_metrics(history, summary, name):
 
 # define training loop
 def train(state, train_iter, val_iter, test_iter, epochs, lr_array):
+    """
+    Main training loop with Dynamic LODE Interaction.
+    Mechanism:
+    - Runs standard training for `update_freq` steps.
+    - Collects metrics (loss, accuracy, current LR) into a trajectory vector.
+    - Calls `calculate_lode_lr` to extrapolate and optimize the future schedule.
+    - Updates the optimizer's `lr_buffer` in-place to apply the new schedule
+      without triggering a JIT re-compilation.
+    - Supports on-the-fly switching from AdamW to Nesterov (via `switch_nest`)
+      if the schedule demands it (experimental feature).
+
+    Args:
+        state (TrainState): Initial training state.
+        train_iter, val_iter, test_iter: Data iterators.
+        epochs (int): Total epochs to run.
+        lr_array (jnp.ndarray): Initial buffer for the learning rate schedule.
+
+    Returns:
+        dict: A history dictionary containing loss, accuracy, and LR curves.
+    """
     history = defaultdict(list)
     update_lr = False
     update_freq = 30

@@ -3,6 +3,16 @@ import jax.numpy as jnp
 
 
 class CNN(nn.Module):
+    """
+    A simple 3-layer Convolutional Neural Network baseline.
+    Designed for Fashion-MNIST/MNIST tasks, this model includes hardcoded reshaping
+    logic to handle flattened inputs if necessary. It uses a standard Conv-ReLU-Pool
+    architecture with increasing channel depth and dropout regularization.
+
+    Attributes:
+        num_classes (int): Number of output classes (e.g., 10 for Fashion-MNIST).
+        dropout_rate (float): Probability of dropping units during training. Default 0.25.
+    """
     num_classes: int
     dropout_rate: float = 0.25
 

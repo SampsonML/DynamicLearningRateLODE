@@ -99,6 +99,15 @@ class Head(nn.Module):
         return x
 
 class ResNet(nn.Module):
+    """
+    A flexible ResNet V1 implementation for CIFAR-100 and ImageNet.
+    Attributes:
+        classes (int): Number of output classes.
+        channel_list (Sequence[int]): List defining the number of filters for each stage.
+        num_blocks_list (Sequence[int]): List defining the depth (number of residual blocks) per stage.
+        strides (Sequence[int]): List defining the stride for each stage (controls downsampling).
+        head_p_drop (float): Dropout rate applied before the final dense layer.
+    """
     classes: int
     channel_list: Sequence[int]
     num_blocks_list: Sequence[int]

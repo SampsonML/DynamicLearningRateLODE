@@ -1,3 +1,10 @@
+"""
+Tests for Latent ODE Architecture Dimensions.
+This module verifies that the LatentODE model correctly processes input shapes
+through the entire Encode-Process-Decode pipeline. It ensures that:
+- The Encoder produces latent vectors of the correct size.
+- The Decoder (ODE solver) returns trajectories matching the expected time and data dimensions.
+"""
 import pytest
 import jax.random as jr
 from dynamic_lode.core.lode import LatentODE
@@ -17,7 +24,12 @@ def model_fixture():
     )
 
 def test_latent_ode_shapes(model_fixture):
-    # now ensure currect latent dimensions
+    """
+    Verifies the input-output tensor shapes of the Encoder and Decoder.
+    Checks if:
+    - _latent() maps (Time, Data) -> (Latent_Size,)
+    - _sample() maps (Time,) + (Latent_Size,) -> (Time, Data)
+    """
     import jax.numpy as jnp
     ts = jnp.linspace(0, 10, 50)
     ys = jnp.ones((50, 3))

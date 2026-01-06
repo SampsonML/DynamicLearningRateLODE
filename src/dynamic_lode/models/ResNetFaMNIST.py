@@ -24,6 +24,11 @@ class ResidualBlock(nn.Module):
         return nn.relu(x + residual)
 
 class ResNet18(nn.Module):
+    """
+    ResNet-18 variant optimized for Fashion-MNIST (28x28 input).
+    Attributes:
+        num_classes (int): Number of output classes. Default 10.
+    """
     num_classes: int = 10
 
     @nn.compact
@@ -56,6 +61,11 @@ class ResNet18(nn.Module):
 
 
 class ResNet9(nn.Module):
+    """
+    A lightweight 'ResNet-9' architecture for fast experimentation.
+    Attributes:
+        num_classes (int): Number of output classes. Default 10.
+    """
     num_classes: int = 10
 
     @nn.compact

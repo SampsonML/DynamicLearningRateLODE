@@ -25,6 +25,14 @@ class ResidualBlock(nn.Module):
 
 
 class ResNet34(nn.Module):
+    """
+    Standard ResNet-34 implementation using Basic Residual Blocks.
+    Follows the classic [3, 4, 6, 3] block structure with filter counts [64, 128, 256, 512].
+    Suitable for larger scale image classification tasks.
+
+    Attributes:
+        num_classes (int): Number of output classes. Default 1000 (ImageNet).
+    """
     num_classes: int = 1000
 
     @nn.compact
@@ -82,10 +90,15 @@ class BottleneckBlock(nn.Module):
         return nn.relu(x + residual)
 
 
-
-
-
 class ResNet50(nn.Module):
+    """
+    Standard ResNet-50 implementation using Bottleneck Blocks.
+    Uses the 1x1 -> 3x3 -> 1x1 bottleneck architecture to increase depth while
+    managing computational cost. Follows the [3, 4, 6, 3] structure.
+
+    Attributes:
+        num_classes (int): Number of output classes. Default 1000.
+    """
     num_classes: int = 1000  
 
     @nn.compact
