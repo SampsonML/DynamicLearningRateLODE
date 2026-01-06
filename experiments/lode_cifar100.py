@@ -29,9 +29,9 @@ from jax import config
 config.update("jax_enable_x64", True)
 import equinox as eqx
 
-from models import LatentODE
-from lode_scheduler import lode_scheduler
-from utils import *
+from dynamic_lode.core.lode import LatentODE
+from dynamic_lode.core.lode_scheduler import lode_scheduler
+from dynamic_lode.utils.utils import update_lr_buffer, make_schedule_fn
 
 # -------------------- #
 #     get the lode     #
@@ -118,7 +118,7 @@ def dataset_to_iterator(ds):
 
 
 #   grab the model
-from models import ResNet
+from dynamic_lode.models.ResNet18 import ResNet
 
 
 def cross_entropy_loss(logits, labels):

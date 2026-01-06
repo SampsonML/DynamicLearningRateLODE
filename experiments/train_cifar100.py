@@ -62,7 +62,7 @@ def dataset_to_iterator(ds):
     return it
 
 #   grab the model
-from models import ResNet
+from dynamic_lode.models.ResNet18 import ResNet
 
 def cross_entropy_loss(logits, labels):
     one_hot_labels = common_utils.onehot(labels, num_classes=num_classes)
