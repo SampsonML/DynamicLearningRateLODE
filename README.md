@@ -8,6 +8,23 @@
 
 <img src="/images/model_schematic_.png" height="500">
 
+## Installation
+
+> [!IMPORTANT]  
+> This repository relies on JAX which is well maintained, but also very fast moving. Please use your favorite environment manager and create a fresh env before running this.
+> [uv](https://docs.astral.sh/uv/#projects) is particularly nice 
+
+Clone the repository and install dependencies:
+
+```shell
+git clone https://github.com/SampsonML/DynamicLearningRateLODE.git
+cd DynamicLearningRateLODE
+pip install -e .
+# or using uv
+uv pip install -e .
+```
+> **Note:** The requirements installs `jax[cpu]`, to run this model with CUDA support if you want GPU acceleration please install the appropriate jax flavour.
+> To do this please visit here (https://docs.jax.dev/en/latest/installation.html) for the latest methods for GPU and TPU compatible JAX installations, noting mainly the version of the CUDA drivers on your machine (i.e. 12.X, 13.X)
 
 ## Repository Structure
 
