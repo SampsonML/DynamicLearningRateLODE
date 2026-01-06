@@ -18,7 +18,8 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-# Unified dependencies matched with your path-minimizer repository
+
+# Unified dependencies 
 dependencies = [
     "jax>=0.4.13",
     "jaxlib>=0.4.13",
@@ -29,6 +30,8 @@ dependencies = [
     "optax>=0.1.5",
     "tensorflow-datasets",
     "matplotlib",
+    "tensorflow", 
+    "pytest",      
 ]
 
 [tool.setuptools.packages.find]
