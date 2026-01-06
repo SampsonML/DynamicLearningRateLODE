@@ -10,6 +10,11 @@ import matplotlib.pyplot as plt
 import equinox as eqx
 import jax
 import jax.numpy as jnp
+import jax.nn as jnn
+import jax.random as jr
+from jax import config
+# we use float64 for paper experiments, though this is not required
+config.update("jax_enable_x64", True)
 from flax import linen as nn
 from flax.training import train_state, common_utils
 import optax
@@ -19,11 +24,6 @@ import argparse
 
 tf.config.set_visible_devices([], "GPU")
 jax.local_devices()
-
-import jax.nn as jnn
-import jax.random as jr
-from jax import config
-config.update("jax_enable_x64", True)
 
 from dynamic_lode.core.lode import LatentODE
 from dynamic_lode.core.lode_scheduler import lode_scheduler

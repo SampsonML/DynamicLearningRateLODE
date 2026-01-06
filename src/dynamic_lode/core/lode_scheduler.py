@@ -223,8 +223,9 @@ def lode_scheduler(
         debug.print("----------------------------------------------\n")
 
     # pad the left of lr array with zeros ensuring it is always the same size
-    # note the lode-scheduler never uses previously-seen values, so no need to store/concat 
+    # Note: the lode-scheduler never uses previously-seen values, so no need to store/concat 
     # the actual old learning rates (which may not not be the correct length)
+    # a seperate array is saved to store full LR-schedule used in each run
     pad_len = t_final - steps_left
     pad = jnp.zeros(pad_len)
     lr_schedule_avg = jnp.concatenate([pad, lr_schedule_avg])
