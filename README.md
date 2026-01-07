@@ -1,10 +1,10 @@
 # Dynamic learning rate scheduling with latent ODEs
 [![arXiv](https://img.shields.io/badge/arXiv-2410.08923-<COLOR>.svg)](https://arxiv.org/abs/2509.23052)
 [![Blog](https://img.shields.io/badge/Blog-link-orange.svg)](https://msampson.net/blog/2025/lode-scheduler/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Tests](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml/badge.svg)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml)
 [![Lint](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/lint.yml/badge.svg)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/lint.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Overview 
 We learn a latent representation of training dynamics, training loss, validation accuracy and learning rate, from the observation of prior runs, which one would expect to have run anyway during a standard hyperparameter sweep. By encoding training loss, validation accuracy, and learning rate into a latent space and evolving these quantities via an ODE, the system can simulate how training would unfold with different parameters, namely the learning rate schedule. 
