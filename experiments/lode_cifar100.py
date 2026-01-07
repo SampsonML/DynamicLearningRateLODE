@@ -546,15 +546,14 @@ tx = optax.adamw(
     learning_rate=schedule_fn, weight_decay=weight_decay, nesterov=True, b1=0.9
 )
 
-from flax.struct import dataclass
+from flax.struct import dataclass, field
 
 
 @dataclass
 class CustomTrainState(train_state.TrainState):
     batch_stats: Any = None
-    lr: jnp.ndarray = jnp.array(
-        0.0, dtype=jnp.float32
-    )  # Store the current learning rate
+    # Use default_factory for the JAX array
+    lr: jnp.ndarray = field(default_factory=lambda: jnp.array(0.0, dtype=jnp.float32))
 
 
 # create the initial training state
