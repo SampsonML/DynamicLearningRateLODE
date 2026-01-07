@@ -83,10 +83,17 @@ DynamicLearningRateLODE/
 ├── experiments/                   # Research runs
 │   ├── lode_cifar100.py           # Main dynamic scheduling experiment
 │   └── train_cifar100.py          # Baseline training script (create training data)
+├── tests/                         # Unit tests
+│   ├── test_lode_schedule.py      # Scheduler logic verification
+│   ├── test_lode_shapes.py        # Tensor shape & architecture checks
+│   ├── test_models.py             # Model initialization smoke tests
+│   ├── test_schedules.py          # Schedule interpolation tests
+│   └── test_utils.py              # Math/Hessian utility verification
 ├── images/                        # Demo images for docs
-├── pyproject.toml                 # Project metadata and dependencies
+├── pyproject.toml                 # Dependencies and project metadata
+├── uv.lock                        # Reproducible dependency lockfile
 ├── LICENSE                        # Apache 2.0
-└── README.md                      # Docs
+└── README.md                      # Documentation
 ```
 
 ### Citation
