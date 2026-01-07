@@ -5,6 +5,7 @@ through the entire Encode-Process-Decode pipeline. It ensures that:
 - The Encoder produces latent vectors of the correct size.
 - The Decoder (ODE solver) returns trajectories matching the expected time and data dimensions.
 """
+
 import pytest
 import jax.random as jr
 from dynamic_lode.core.lode import LatentODE
