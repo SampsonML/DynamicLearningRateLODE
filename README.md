@@ -42,10 +42,15 @@ git clone https://github.com/SampsonML/DynamicLearningRateLODE.git
 cd DynamicLearningRateLODE
 pip install -e .
 # or using uv
-uv pip install -e .
+uv sync .
 ```
 > **Note:** The requirements installs `jax[cpu]`, to run this model with CUDA support if you want GPU acceleration please install the appropriate jax flavour.
 > To do this please visit here (https://docs.jax.dev/en/latest/installation.html) for the latest methods for GPU and TPU compatible JAX installations, noting mainly the version of the CUDA drivers on your machine (i.e. 12.X, 13.X)
+
+Run the tests:
+```shell
+uv run pytest
+```
 
 ## Training a LODE-scheduler
 To train a LODE-scheduler, one needs to collate the learning rate, training loss, and validation accuracy of a set of prior training runs. For example, 
