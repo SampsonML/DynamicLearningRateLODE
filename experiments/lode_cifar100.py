@@ -27,7 +27,7 @@ jax.local_devices()
 
 from dynamic_lode.core.lode import LatentODE
 from dynamic_lode.core.lode_scheduler import lode_scheduler
-from dynamic_lode.utils.utils import update_lr_buffer, make_schedule_fn
+from dynamic_lode.utils import update_lr_buffer, make_schedule_fn
 
 # ---------------------
 #    data processing
@@ -428,7 +428,8 @@ key = jr.PRNGKey(seed)
 data_key, model_key, loader_key, train_key, sample_key = jr.split(key, 5)
 # instantiate the model
 lode = LatentODE(
-    data_size=model_size,
+    input_size=model_size,
+    output_size=model_size,
     hidden_size=hidden_size,
     latent_size=latent_size,
     width_size=width_size,
@@ -436,6 +437,7 @@ lode = LatentODE(
     key=model_key,
     alpha=alpha,
     lossType=lossType,
+    dt=0.2,
 )
 
 # load the model
