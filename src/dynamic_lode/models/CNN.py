@@ -13,6 +13,7 @@ class CNN(nn.Module):
         num_classes (int): Number of output classes (e.g., 10 for Fashion-MNIST).
         dropout_rate (float): Probability of dropping units during training. Default 0.25.
     """
+
     num_classes: int
     dropout_rate: float = 0.25
 
@@ -41,6 +42,3 @@ class CNN(nn.Module):
 
         x = nn.Dense(self.num_classes)(x)
         return x
-
-
-

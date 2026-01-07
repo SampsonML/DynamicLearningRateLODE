@@ -2,6 +2,7 @@
 import flax.linen as nn
 import jax.numpy as jnp
 
+
 class ResidualBlock(nn.Module):
     filters: int
     strides: tuple = (1, 1)
@@ -14,11 +15,13 @@ class ResidualBlock(nn.Module):
             residual = nn.Conv(self.filters, (1, 1), self.strides, use_bias=False)(x)
             residual = nn.BatchNorm(use_running_average=not train)(residual)
 
-        x = nn.Conv(self.filters, (3, 3), self.strides, padding='SAME', use_bias=False)(x)
+        x = nn.Conv(self.filters, (3, 3), self.strides, padding="SAME", use_bias=False)(
+            x
+        )
         x = nn.BatchNorm(use_running_average=not train)(x)
         x = nn.relu(x)
 
-        x = nn.Conv(self.filters, (3, 3), padding='SAME', use_bias=False)(x)
+        x = nn.Conv(self.filters, (3, 3), padding="SAME", use_bias=False)(x)
         x = nn.BatchNorm(use_running_average=not train)(x)
 
         return nn.relu(x + residual)
@@ -33,18 +36,21 @@ class ResNet34(nn.Module):
     Attributes:
         num_classes (int): Number of output classes. Default 1000 (ImageNet).
     """
+
     num_classes: int = 1000
 
     @nn.compact
     def __call__(self, x, train: bool = True):
-        x = nn.Conv(64, (7, 7), padding='SAME', use_bias=False)(x)
+        x = nn.Conv(64, (7, 7), padding="SAME", use_bias=False)(x)
         x = nn.BatchNorm(use_running_average=not train)(x)
         x = nn.relu(x)
-        x = nn.max_pool(x, (3, 3), strides=(2, 2), padding='SAME')
+        x = nn.max_pool(x, (3, 3), strides=(2, 2), padding="SAME")
 
         def make_layer(filters, blocks, stride):
             layers = []
-            layers.append(ResidualBlock(filters, strides=(stride, stride), use_projection=True))
+            layers.append(
+                ResidualBlock(filters, strides=(stride, stride), use_projection=True)
+            )
             for _ in range(1, blocks):
                 layers.append(ResidualBlock(filters))
             return layers
@@ -73,14 +79,16 @@ class BottleneckBlock(nn.Module):
     def __call__(self, x, train: bool = True):
         residual = x
         if self.use_projection:
-            residual = nn.Conv(self.filters * 4, (1, 1), self.strides, use_bias=False)(x)
+            residual = nn.Conv(self.filters * 4, (1, 1), self.strides, use_bias=False)(
+                x
+            )
             residual = nn.BatchNorm(use_running_average=not train)(residual)
 
         x = nn.Conv(self.filters, (1, 1), self.strides, use_bias=False)(x)
         x = nn.BatchNorm(use_running_average=not train)(x)
         x = nn.relu(x)
 
-        x = nn.Conv(self.filters, (3, 3), padding='SAME', use_bias=False)(x)
+        x = nn.Conv(self.filters, (3, 3), padding="SAME", use_bias=False)(x)
         x = nn.BatchNorm(use_running_average=not train)(x)
         x = nn.relu(x)
 
@@ -99,18 +107,21 @@ class ResNet50(nn.Module):
     Attributes:
         num_classes (int): Number of output classes. Default 1000.
     """
-    num_classes: int = 1000  
+
+    num_classes: int = 1000
 
     @nn.compact
     def __call__(self, x, train: bool = True):
-        x = nn.Conv(64, (7, 7), strides=(2, 2), padding='SAME', use_bias=False)(x)
+        x = nn.Conv(64, (7, 7), strides=(2, 2), padding="SAME", use_bias=False)(x)
         x = nn.BatchNorm(use_running_average=not train)(x)
         x = nn.relu(x)
-        x = nn.max_pool(x, (3, 3), strides=(2, 2), padding='SAME')
+        x = nn.max_pool(x, (3, 3), strides=(2, 2), padding="SAME")
 
         def make_layer(filters, blocks, stride):
             layers = []
-            layers.append(BottleneckBlock(filters, strides=(stride, stride), use_projection=True))
+            layers.append(
+                BottleneckBlock(filters, strides=(stride, stride), use_projection=True)
+            )
             for _ in range(1, blocks):
                 layers.append(BottleneckBlock(filters))
             return layers
@@ -127,6 +138,3 @@ class ResNet50(nn.Module):
         x = jnp.mean(x, axis=(1, 2))  # global average pooling
         x = nn.Dense(self.num_classes)(x)
         return x
-
-
-

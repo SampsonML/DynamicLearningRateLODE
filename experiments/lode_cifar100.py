@@ -13,6 +13,7 @@ import jax.numpy as jnp
 import jax.nn as jnn
 import jax.random as jr
 from jax import config
+
 # we use float64 for paper experiments, though this is not required
 config.update("jax_enable_x64", True)
 from flax import linen as nn
@@ -28,6 +29,7 @@ jax.local_devices()
 from dynamic_lode.core.lode import LatentODE
 from dynamic_lode.core.lode_scheduler import lode_scheduler
 from dynamic_lode.utils import update_lr_buffer, make_schedule_fn
+
 
 # ---------------------
 #    data processing
@@ -117,7 +119,7 @@ def get_schedule(schedule_type, init_lr, total_steps):
 
     Returns:
         optax.schedule: An Optax-compatible schedule function.
-    
+
     Raises:
         ValueError: If an unsupported schedule type is provided.
     """
@@ -195,9 +197,9 @@ def calculate_lode_lr(
 ):
     """
     Prepares the context window and queries the LODE scheduler for the next LR schedule.
-    This function slices the most recent `update_freq` steps 
-    from the history metrics to create the "context path" that the LODE encodes 
-    to determine the current training dynamics. In future this function will be 
+    This function slices the most recent `update_freq` steps
+    from the history metrics to create the "context path" that the LODE encodes
+    to determine the current training dynamics. In future this function will be
     removed and directly ingegrated into the lode_schedule.py pipeline
 
     Args:
@@ -205,7 +207,7 @@ def calculate_lode_lr(
         loss_trajectory (list/array): Full history of training losses.
         lr_trajectory (list/array): Full history of learning rates (log-space).
         accuracy (list/array): Full history of validation accuracies.
-        extrap_len (int): Total length of the extrapolation horizon 
+        extrap_len (int): Total length of the extrapolation horizon
         step_current (int): The current global training step.
         best_loss, best_lr, best_test: Metadata for tracking best performance (unused in this wrapper).
         lr_array (jnp.ndarray): The current full-length learning rate schedule buffer.
@@ -213,7 +215,7 @@ def calculate_lode_lr(
         t_final (int): The target end step of the training run (prediction horizon).
 
     Returns:
-        jnp.ndarray: An updated learning rate schedule array where the future values 
+        jnp.ndarray: An updated learning rate schedule array where the future values
                      have been replaced by the LODE's optimal prediction.
     """
     n = len(loss_trajectory)
@@ -296,7 +298,9 @@ def train(state, train_iter, val_iter, test_iter, epochs, lr_array):
     update_step = 0
     cur_t = 0
     t_final = 600
-    extrap_init = t_final # this can be altered depending on confidence of lode extrapolation
+    extrap_init = (
+        t_final  # this can be altered depending on confidence of lode extrapolation
+    )
     switch_nest = False
     best_lr = jnp.array(lr_array[cur_t])
 
@@ -446,7 +450,9 @@ try:
     lode = eqx.tree_deserialise_leaves(args.path, lode)
     print("Loaded pre-trained LODE model.")
 except (FileNotFoundError, ValueError):
-    print("[WARNING] Pre-trained model not found. Using random initialization for demonstration.")
+    print(
+        "[WARNING] Pre-trained model not found. Using random initialization for demonstration."
+    )
     # lode is initialized with random weights
 
 # set fixed values for experimental runs
@@ -563,11 +569,14 @@ state = CustomTrainState.create(
 # train model and save metrics
 history = train(state, train_iter, val_iter, test_iter, epochs, lr_array)
 
-# save training metrics 
-import pickle 
-save_dir = "/path/to/save/" # change this to where you would like to save the traning metrics
+# save training metrics
+import pickle
+
+save_dir = (
+    "/path/to/save/"  # change this to where you would like to save the traning metrics
+)
 save_name = f"schedule_{schedule}_lr_{learning_rate}_seed_{seed}.pkl"
-with open(save_dir+save_name, "wb") as f:
+with open(save_dir + save_name, "wb") as f:
     pickle.dump(history, f)
 
-print(f'file saved to {save_dir}')
+print(f"file saved to {save_dir}")

@@ -2,6 +2,7 @@ import jax.numpy as jnp
 import jax.random as jr
 from dynamic_lode.core.lode_scheduler import lode_scheduler
 
+
 # Define a mock LODE
 class MockLatentODE:
     def _latent(self, ts, ys, key):
@@ -19,8 +20,9 @@ class MockLatentODE:
         lr = jnp.zeros(T)
         # Val acc increases (column 2)
         val = jnp.linspace(0.5, 0.9, T)
-        
+
         return jnp.stack([loss, lr, val], axis=-1)
+
 
 def test_lode_scheduler_execution():
     """
@@ -31,17 +33,17 @@ def test_lode_scheduler_execution():
     - Returns a schedule of the correct length.
     """
     mock_model = MockLatentODE()
-    
+
     # Dummy history data
     time_path = jnp.arange(10)
     loss_path = jnp.linspace(2.0, 1.0, 10)
     lr_path = jnp.zeros(10)
     val_path = jnp.linspace(0.2, 0.5, 10)
-    current_lr_schedule = jnp.zeros(100) # Full schedule
-    
+    current_lr_schedule = jnp.zeros(100)  # Full schedule
+
     t_final = 50
     current_time = 10
-    
+
     new_schedule = lode_scheduler(
         current_time=current_time,
         model=mock_model,
@@ -51,13 +53,13 @@ def test_lode_scheduler_execution():
         validation_path=val_path,
         lr_schedule=current_lr_schedule,
         t_final=t_final,
-        n_samples=5,      # Small number for speed
-        verbose=False
+        n_samples=5,  # Small number for speed
+        verbose=False,
     )
-    
+
     # Output is an array
     assert isinstance(new_schedule, jnp.ndarray)
-    
+
     # Output length matches the 'steps_left' + padding logic
     # The scheduler returns the full schedule length (t_final)
     # logic: pad_len + new_segment

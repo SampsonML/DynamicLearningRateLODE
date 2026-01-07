@@ -2,11 +2,14 @@ import jax.numpy as jnp
 import jax
 from jax.flatten_util import ravel_pytree
 
-def top_hessian_eigenvalue(loss_fn, params, data, num_iters=50, key=jax.random.PRNGKey(0)):
+
+def top_hessian_eigenvalue(
+    loss_fn, params, data, num_iters=50, key=jax.random.PRNGKey(0)
+):
     """
     Estimates the top eigenvalue of the Hessian matrix using Power Iteration.
     This acts as a proxy for "sharpness" of the loss landscape. A higher max eigenvalue
-    indicates a sharper minimum (higher curvature), which often correlates with 
+    indicates a sharper minimum (higher curvature), which often correlates with
     poorer generalization.
 
     Args:
