@@ -7,7 +7,7 @@ name = "dynamic_lode"
 version = "0.1.0"
 description = "Dynamic learning rate scheduling with Latent Neural ODEs"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = "==3.12.*"
 license = { text = "Apache-2.0" }
 authors = [
     { name = "Matt L. Sampson", email = "matt.sampson@princeton.edu" }
