@@ -5,14 +5,12 @@ import numpy as np
 import jax
 from jax import debug
 import jax.numpy as jnp
-from jax import random
 import jax.random as jr
-from jax import config
-
-config.update("jax_enable_x64", True)
-from .lode import LatentODE
 from jax import vmap
 from jax.typing import ArrayLike
+from jax import config
+config.update("jax_enable_x64", True)
+from .lode import LatentODE
 
 
 def lode_scheduler(
@@ -93,7 +91,7 @@ def lode_scheduler(
 
     # now determine the current latent vector (z_0) for the path taken, note treat lode_scheduler as a
     # private function in full LODE-scheduler pipeline, so calling _ methods here
-    current_latent = model._latent(time_path, full_path, key=random.PRNGKey(23))
+    current_latent = model._latent(time_path, full_path, key=jr.PRNGKey(23))
     current_traj = model._sample(extrap_path, current_latent)
     best_validation = validation_path[-1]
 
@@ -105,9 +103,9 @@ def lode_scheduler(
 
     # ----------------------------------------------------
     # step 1: sample 'n_samples' latent ODE extrapolations
-    key = jax.random.PRNGKey(23)
+    key = jr.PRNGKey(23)
     noise_matrix = (
-        jax.random.normal(key, shape=(n_samples, *current_latent.shape)) * sigma
+        jr.normal(key, shape=(n_samples, *current_latent.shape)) * sigma
     )
     noise_matrix *= jnp.abs(current_latent)  # scale noise by magnitude
 
