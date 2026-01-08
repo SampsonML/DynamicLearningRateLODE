@@ -474,7 +474,7 @@ lr_track = []
 val_track = []
 
 # load in the data locally from scratch (faster IO than home)
-data_dir = os.environ.get('DATA_DIR', './data')
+data_dir = os.environ.get("DATA_DIR", "./data")
 dataset_builder = tfds.builder("cifar100", data_dir=data_dir)
 dataset_builder.download_and_prepare()
 
@@ -571,9 +571,7 @@ history = train(state, train_iter, val_iter, test_iter, epochs, lr_array)
 # save training metrics
 import pickle
 
-save_dir = (
-    ""  # change this to where you would like to save the traning metrics
-)
+save_dir = ""  # change this to where you would like to save the traning metrics
 save_name = f"schedule_{schedule}_lr_{learning_rate}_seed_{seed}.pkl"
 with open(save_dir + save_name, "wb") as f:
     pickle.dump(history, f)

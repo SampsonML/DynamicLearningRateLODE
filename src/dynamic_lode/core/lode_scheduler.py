@@ -9,6 +9,7 @@ import jax.random as jr
 from jax import vmap
 from jax.typing import ArrayLike
 from jax import config
+
 config.update("jax_enable_x64", True)
 from .lode import LatentODE
 
@@ -104,9 +105,7 @@ def lode_scheduler(
     # ----------------------------------------------------
     # step 1: sample 'n_samples' latent ODE extrapolations
     key = jr.PRNGKey(23)
-    noise_matrix = (
-        jr.normal(key, shape=(n_samples, *current_latent.shape)) * sigma
-    )
+    noise_matrix = jr.normal(key, shape=(n_samples, *current_latent.shape)) * sigma
     noise_matrix *= jnp.abs(current_latent)  # scale noise by magnitude
 
     # Include original latent as first sample
