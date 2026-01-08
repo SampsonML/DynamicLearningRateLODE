@@ -233,8 +233,8 @@ batch_size = 256
 epochs = 60
 weight_decay = 1e-2
 
-# load in the data locally from scratch (faster IO than home)
-data_dir = "/scratch/gpfs/ms0821/tfds_data/"  # change this to wherever you save the cifar100 data
+# load in the data locally from scratch (faster IO than home) if on clusters
+data_dir = os.environ.get('DATA_DIR', './data')
 dataset_builder = tfds.builder("cifar100", data_dir=data_dir)
 dataset_builder.download_and_prepare()
 
@@ -311,7 +311,7 @@ print("training complete")
 import pickle
 
 save_dir = (
-    "/path/to/save"  # change this to where you would like to save the traning metrics
+    ""  # change this to where you would like to save the traning metrics
 )
 save_name = f"schedule_{schedule}_lr_{learning_rate}_seed_{seed}.pkl"
 with open(save_dir + save_name, "wb") as f:
