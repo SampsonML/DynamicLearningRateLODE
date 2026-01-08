@@ -116,7 +116,7 @@ def lode_scheduler(
     noisy_latents = current_latent[None, :] + noise_matrix
 
     # Vectorized sampling
-    batched_sample = jax.vmap(model._sample, in_axes=(None, 0))
+    batched_sample = vmap(model._sample, in_axes=(None, 0))
     pred_trajs = batched_sample(extrap_path, noisy_latents)
 
     min_t = 0
