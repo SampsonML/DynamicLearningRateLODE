@@ -3,6 +3,7 @@
 [![Blog](https://img.shields.io/badge/Blog-link-orange.svg)](https://msampson.net/blog/2025/lode-scheduler/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Tests](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml/badge.svg)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE/graph/badge.svg?token=80f6888c-9daa-4df3-8d66-1d4d293cd122)](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE)
 [![Lint](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/lint.yml/badge.svg)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/lint.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
