@@ -1,4 +1,5 @@
 # experimantal runscript for CIFAR100 dynamic LODE tests: https://arxiv.org/abs/2509.23052
+import os
 import math
 import time
 from functools import partial
