@@ -1,5 +1,5 @@
 # Dynamic learning rate scheduling with latent ODEs
-[![arXiv](https://img.shields.io/badge/arXiv:2509.23052-<COLOR>.svg)](https://arxiv.org/abs/2509.23052)
+[![arXiv](https://img.shields.io/badge/arXiv-2509.23052-<COLOR>.svg)](https://arxiv.org/abs/2509.23052)
 [![Blog](https://img.shields.io/badge/Blog-link-orange.svg)](https://msampson.net/blog/2025/lode-scheduler/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Tests](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml/badge.svg)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml)
