@@ -1,0 +1,21 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+
+build/
+dist/
+*.egg-info/
+
+.pytest_cache/
+.ruff_cache/
+
+.venv/
+venv/
+env/
+
+# Data and Experiment Outputs
+data/
+*.pkl
+tfds_data/
+
+.DS_Store
