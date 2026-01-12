@@ -3,9 +3,10 @@
 [![Blog](https://img.shields.io/badge/Blog-link-orange.svg?style=for-the-badge&logo=rss&logoColor=white)](https://msampson.net/blog/2025/lode-scheduler/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge&logo=python&logoColor=white)](https://github.com/psf/black)
-[![Tests](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml/badge.svg?style=for-the-badge)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/github/actions/workflow/status/SampsonML/DynamicLearningRateLODE/ci.yml?branch=main&style=for-the-badge&label=Tests)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml)
+[![codecov](https://img.shields.io/codecov/c/github/SampsonML/DynamicLearningRateLODE?token=80f6888c-9daa-4df3-8d66-1d4d293cd122&style=for-the-badge&logo=codecov)](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE)
+[![Lint](https://img.shields.io/github/actions/workflow/status/SampsonML/DynamicLearningRateLODE/lint.yml?branch=main&style=for-the-badge&label=Lint)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/lint.yml)
 [![codecov](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE/graph/badge.svg?token=80f6888c-9daa-4df3-8d66-1d4d293cd122&style=for-the-badge)](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE)
-[![Lint](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/lint.yml/badge.svg?style=for-the-badge)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/lint.yml)
 
 ## Overview 
 We learn a latent representation of training dynamics, training loss, validation accuracy and learning rate, from the observation of prior runs, which one would expect to have run anyway during a standard hyperparameter sweep. By encoding training loss, validation accuracy, and learning rate into a latent space and evolving these quantities via an ODE, the system can simulate how training would unfold with different parameters, namely the learning rate schedule. 
