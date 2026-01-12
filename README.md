@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge&logo=python&logoColor=white)](https://github.com/psf/black)
 [![Tests](https://img.shields.io/github/actions/workflow/status/SampsonML/DynamicLearningRateLODE/ci.yml?branch=main&style=for-the-badge&label=Tests)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/ci.yml)
-[![codecov](https://img.shields.io/codecov/c/github/SampsonML/DynamicLearningRateLODE?token=80f6888c-9daa-4df3-8d66-1d4d293cd122&style=for-the-badge&logo=codecov)](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE)
+[![codecov](https://img.shields.io/codecov/c/github/SampsonML/DynamicLearningRateLODE?style=for-the-badge&logo=codecov)](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE)
 [![Lint](https://img.shields.io/github/actions/workflow/status/SampsonML/DynamicLearningRateLODE/lint.yml?branch=main&style=for-the-badge&label=Lint)](https://github.com/SampsonML/DynamicLearningRateLODE/actions/workflows/lint.yml)
 [![codecov](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE/graph/badge.svg?token=80f6888c-9daa-4df3-8d66-1d4d293cd122&style=for-the-badge)](https://codecov.io/gh/SampsonML/DynamicLearningRateLODE)
 
